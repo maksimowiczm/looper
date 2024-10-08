@@ -1,17 +1,16 @@
-use std::sync::{Arc, PoisonError, RwLock, RwLockWriteGuard};
+use std::sync::{Arc, RwLock};
 use tokio::sync::mpsc::error::SendError;
 
 pub type Subscriber<M> = Box<dyn Fn(M) + Send + Sync>;
-pub type SubscribeError<'a, M> =
-    PoisonError<RwLockWriteGuard<'a, Vec<Box<dyn Fn(M) + Send + Sync>>>>;
 pub struct MessageBus<M> {
     sender: tokio::sync::mpsc::Sender<M>,
+    // consider using an async RwLock because subscribers might lock for a long time
     subscribers: Arc<RwLock<Vec<Subscriber<M>>>>,
 }
 
 impl<M> MessageBus<M>
 where
-    M: Send + Sync + Copy + 'static,
+    M: Send + Sync + Clone + 'static,
 {
     pub fn new(capacity: usize) -> Self {
         let (sender, mut receiver) = tokio::sync::mpsc::channel(capacity);
@@ -29,7 +28,7 @@ where
                     .read()
                     .expect("This is the only place where the lock is held by this thread")
                     .iter()
-                    .for_each(|receiver| receiver(message));
+                    .for_each(|subscriber| subscriber(message.clone()));
             }
         });
 
@@ -42,8 +41,10 @@ impl<M> MessageBus<M> {
         self.sender.send(message).await
     }
 
-    pub fn subscribe(&self, subscriber: Subscriber<M>) -> Result<(), SubscribeError<M>> {
-        self.subscribers.write()?.push(subscriber);
-        Ok(())
+    pub fn subscribe(&self, subscriber: Subscriber<M>) {
+        self.subscribers
+            .write()
+            .expect("If writer panics we are cooked anyway 💀")
+            .push(subscriber);
     }
 }
