@@ -1,12 +1,15 @@
+use crate::algorithm::mutator::Mutator;
 use crate::message_bus::MessageBus;
 
 pub mod builder;
+mod mutator;
+mod population;
 
 #[derive(Debug, Clone)]
 pub struct AlgorithmEvent {}
 
-#[derive(Debug, Clone)]
 pub struct AlgorithmParameters {
+    pub mutator: Mutator,
 }
 
 pub struct Algorithm {

@@ -14,7 +14,7 @@ async fn main() {
 
     let algorithm = AlgorithmBuilder::new()
         .with_message_bus(message_bus)
-        .with_algorithm_parameters(AlgorithmParameters {})
+        .with_algorithm_parameters(todo!())
         .build();
 
     algorithm.run().await;
