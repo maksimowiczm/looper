@@ -11,7 +11,7 @@ pub struct NoMessageBus;
 pub struct WithMessageBus<M>(MessageBus<M>);
 
 pub struct NoAlgorithmParameters;
-pub struct WithAlgorithmParameters(AlgorithmParameters);
+pub struct WithAlgorithmParameters<'a>(AlgorithmParameters<'a>);
 // endregion
 
 impl AlgorithmBuilder<NoMessageBus, NoAlgorithmParameters> {
@@ -23,8 +23,8 @@ impl AlgorithmBuilder<NoMessageBus, NoAlgorithmParameters> {
     }
 }
 
-impl AlgorithmBuilder<WithMessageBus<AlgorithmEvent>, WithAlgorithmParameters> {
-    pub fn build(self) -> Algorithm {
+impl<'a> AlgorithmBuilder<WithMessageBus<AlgorithmEvent>, WithAlgorithmParameters<'a>> {
+    pub fn build(self) -> Algorithm<'a> {
         Algorithm {
             message_bus: self.message_bus.0,
             algorithm_parameters: self.algorithm_parameters.0,
