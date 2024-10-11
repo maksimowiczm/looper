@@ -4,7 +4,7 @@ use crate::algorithm::population::{Individual, Population};
 
 #[cfg_attr(test, derive(Debug, PartialEq))]
 pub struct BestMutator {
-    pub(super) how_many: usize,
+    pub(super) size: usize,
 }
 
 impl Mutate for BestMutator {
@@ -13,9 +13,13 @@ impl Mutate for BestMutator {
 
         mutator::difference(
             best,
-            self.how_many,
+            self.size,
             factor,
             population.iter().filter(|x| *x != best).collect(),
         )
+    }
+
+    fn vector_size(&self) -> usize {
+        self.size
     }
 }

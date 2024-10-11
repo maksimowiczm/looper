@@ -4,16 +4,20 @@ use crate::algorithm::population::{Individual, Population};
 
 #[cfg_attr(test, derive(Debug, PartialEq))]
 pub struct CurrentMutator {
-    pub(super) how_many: usize,
+    pub(super) size: usize,
 }
 
 impl Mutate for CurrentMutator {
     fn mutate(&self, factor: f64, current: &Individual, population: &Population) -> Individual {
         mutator::difference(
             current,
-            self.how_many,
+            self.size,
             factor,
             population.iter().filter(|x| *x != current).collect(),
         )
+    }
+
+    fn vector_size(&self) -> usize {
+        self.size
     }
 }

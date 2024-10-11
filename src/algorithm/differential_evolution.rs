@@ -4,7 +4,7 @@ use crate::algorithm::Individual;
 
 pub(super) struct DifferentialEvolution<'a> {
     pub mutator: &'a dyn Mutate,
-    pub crossover_rate: f64,
+    pub crossover_probability: f64,
 }
 
 impl DifferentialEvolution<'_> {

@@ -3,7 +3,6 @@ use crate::algorithm::mutator::current_mutator::CurrentMutator;
 use crate::algorithm::mutator::random_mutator::RandomMutator;
 use crate::algorithm::mutator::Mutate;
 use std::fmt::{Display, Formatter};
-use std::io::Read;
 use std::iter::Peekable;
 
 // region -- Parser --
@@ -106,9 +105,9 @@ fn parse(
     }
 
     let mutator: Box<dyn Mutate> = match (x.as_str(), how_many, scheme.as_str()) {
-        ("current", how_many, "bin") => Box::new(CurrentMutator { how_many }),
-        ("best", how_many, "bin") => Box::new(BestMutator { how_many }),
-        ("random", how_many, "bin") => Box::new(RandomMutator { how_many }),
+        ("current", how_many, "bin") => Box::new(CurrentMutator { size: how_many }),
+        ("best", how_many, "bin") => Box::new(BestMutator { size: how_many }),
+        ("rand", how_many, "bin") => Box::new(RandomMutator { size: how_many }),
         _ => return Err(ParserError::UnknownMutator),
     };
 

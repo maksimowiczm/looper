@@ -6,7 +6,7 @@ use rand::thread_rng;
 
 #[cfg_attr(test, derive(Debug, PartialEq))]
 pub struct RandomMutator {
-    pub(super) how_many: usize,
+    pub(super) size: usize,
 }
 
 impl Mutate for RandomMutator {
@@ -17,12 +17,16 @@ impl Mutate for RandomMutator {
 
         mutator::difference(
             random_individual,
-            self.how_many,
+            self.size,
             factor,
             population
                 .iter()
                 .filter(|x| *x != random_individual)
                 .collect(),
         )
+    }
+
+    fn vector_size(&self) -> usize {
+        self.size
     }
 }
