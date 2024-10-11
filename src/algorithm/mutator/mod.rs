@@ -5,11 +5,11 @@ use rand::thread_rng;
 
 mod best_mutator;
 mod current_mutator;
+mod parser;
 mod random_mutator;
 
-pub use best_mutator::BestMutator;
-pub use current_mutator::CurrentMutator;
-pub use random_mutator::RandomMutator;
+pub use parser::parse_mutator;
+pub use parser::ParserError as MutatorParserError;
 
 pub trait Mutate {
     fn mutate(&self, factor: f64, current: &Individual, population: &Population) -> Individual;

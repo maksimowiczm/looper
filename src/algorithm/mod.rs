@@ -7,7 +7,7 @@ use crate::message_bus::MessageBus;
 pub mod builder;
 mod differential_evolution;
 mod evaluator;
-mod mutator;
+pub mod mutator;
 pub mod population;
 
 #[derive(Debug, Clone)]

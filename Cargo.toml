@@ -5,5 +5,9 @@ edition = "2021"
 
 [dependencies]
 tokio = { version = "1", features = ["full"] }
+clap = { version = "4.5.20", features = ["derive"] }
 rand = { version = "0.8.5" }
 itertools = { version = "0.13.0" }
+
+[dev-dependencies]
+rstest = { version = "0.23.0" }

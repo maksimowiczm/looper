@@ -2,8 +2,9 @@ use crate::algorithm::mutator;
 use crate::algorithm::mutator::Mutate;
 use crate::algorithm::population::{Individual, Population};
 
+#[cfg_attr(test, derive(Debug, PartialEq))]
 pub struct BestMutator {
-    how_many: usize,
+    pub(super) how_many: usize,
 }
 
 impl Mutate for BestMutator {

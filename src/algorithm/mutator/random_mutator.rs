@@ -4,8 +4,9 @@ use crate::algorithm::population::{Individual, Population};
 use rand::seq::SliceRandom;
 use rand::thread_rng;
 
+#[cfg_attr(test, derive(Debug, PartialEq))]
 pub struct RandomMutator {
-    how_many: usize,
+    pub(super) how_many: usize,
 }
 
 impl Mutate for RandomMutator {
