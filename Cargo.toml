@@ -5,3 +5,5 @@ edition = "2021"
 
 [dependencies]
 tokio = { version = "1", features = ["full"] }
+rand = { version = "0.8.5" }
+itertools = { version = "0.13.0" }
