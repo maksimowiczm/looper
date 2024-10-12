@@ -1,5 +1,4 @@
-use crate::algorithm::builder::AlgorithmBuilder;
-use crate::algorithm::AlgorithmEvent;
+use crate::algorithm::{Algorithm, AlgorithmEvent};
 use crate::cli::{parse_arguments, Args};
 use clap::Parser;
 use message_bus::MessageBus;
@@ -19,19 +18,11 @@ async fn main() {
         }
     };
 
-    let message_bus = MessageBus::new(100);
-    setup_ui(&message_bus);
+    let message_bus = MessageBus::with_subscriber(100, Box::new(handle_algorithm_event));
 
-    AlgorithmBuilder::new()
-        .with_message_bus(message_bus)
-        .with_algorithm_parameters(params)
-        .build()
-        .run()
-        .await
+    Algorithm::new(message_bus, params).run().await
 }
 
-fn setup_ui(message_bus: &MessageBus<AlgorithmEvent>) {
-    message_bus.subscribe(Box::new(|event| {
-        println!("Received event: {:?}", event);
-    }));
+fn handle_algorithm_event(event: AlgorithmEvent) {
+    println!("Received event: {:?}", event);
 }

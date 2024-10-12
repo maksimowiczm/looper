@@ -1,50 +1,32 @@
-use std::sync::{Arc, RwLock};
-use tokio::sync::mpsc::error::SendError;
+use std::ops::Deref;
+use tokio::sync::mpsc;
 
-pub type Subscriber<M> = Box<dyn Fn(M) + Send + Sync>;
-pub struct MessageBus<M> {
-    sender: tokio::sync::mpsc::Sender<M>,
-    // consider using an async RwLock because subscribers might lock for a long time
-    subscribers: Arc<RwLock<Vec<Subscriber<M>>>>,
-}
+pub struct MessageBus<M>(mpsc::Sender<M>);
 
 impl<M> MessageBus<M>
 where
-    M: Send + Sync + Clone + 'static,
+    M: Send + 'static,
 {
-    pub fn new(capacity: usize) -> Self {
-        let (sender, mut receiver) = tokio::sync::mpsc::channel(capacity);
-        let subscribers = Arc::new(RwLock::new(Vec::new()));
+    pub fn with_subscriber<S>(capacity: usize, subscriber: S) -> Self
+    where
+        S: Fn(M) + Send + 'static,
+    {
+        let (sender, mut receiver) = mpsc::channel(capacity);
 
-        let bus = Self {
-            sender,
-            subscribers: subscribers.clone(),
-        };
-
-        // Spawn a task that will listen for messages and send them to all subscribers
         tokio::spawn(async move {
             while let Some(message) = receiver.recv().await {
-                subscribers
-                    .read()
-                    .expect("This is the only place where the lock is held by this thread")
-                    .iter()
-                    .for_each(|subscriber| subscriber(message.clone()));
+                subscriber(message);
             }
         });
 
-        bus
+        Self(sender)
     }
 }
 
-impl<M> MessageBus<M> {
-    pub async fn send(&self, message: M) -> Result<(), SendError<M>> {
-        self.sender.send(message).await
-    }
+impl<M> Deref for MessageBus<M> {
+    type Target = mpsc::Sender<M>;
 
-    pub fn subscribe(&self, subscriber: Subscriber<M>) {
-        self.subscribers
-            .write()
-            .expect("If writer panics we are cooked anyway 💀")
-            .push(subscriber);
+    fn deref(&self) -> &Self::Target {
+        &self.0
     }
 }

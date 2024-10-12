@@ -4,7 +4,6 @@ use crate::algorithm::mutator::Mutate;
 use crate::algorithm::population::Individual;
 use crate::message_bus::MessageBus;
 
-pub mod builder;
 mod differential_evolution;
 pub mod evaluator;
 pub mod mutator;
@@ -31,6 +30,16 @@ pub struct Algorithm {
 }
 
 impl Algorithm {
+    pub fn new(
+        message_bus: MessageBus<AlgorithmEvent>,
+        algorithm_parameters: AlgorithmParameters,
+    ) -> Self {
+        Algorithm {
+            message_bus,
+            algorithm_parameters,
+        }
+    }
+
     pub async fn run(&self) {
         let params = &self.algorithm_parameters;
 

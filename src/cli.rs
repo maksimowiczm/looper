@@ -1,5 +1,5 @@
 use crate::algorithm::evaluator::Evaluate;
-use crate::algorithm::mutator::{parse_mutator, MutatorParserError};
+use crate::algorithm::mutator::parse_mutator;
 use crate::algorithm::AlgorithmParameters;
 use clap::{Parser, ValueEnum};
 use std::fmt::{Display, Formatter};
@@ -36,19 +36,19 @@ impl Function {
 
 #[derive(Debug)]
 pub enum ParseError {
-    InvalidMutation(MutatorParserError),
+    InvalidMutation,
 }
 
 impl Display for ParseError {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
-            ParseError::InvalidMutation(e) => write!(f, "Invalid mutation: {}", e),
+            ParseError::InvalidMutation => write!(f, "Invalid mutation"),
         }
     }
 }
 
 pub fn parse_arguments(args: &Args) -> Result<AlgorithmParameters, ParseError> {
-    let mutator = parse_mutator(&args.mutation).map_err(ParseError::InvalidMutation)?;
+    let mutator = parse_mutator(&args.mutation).map_err(|_| ParseError::InvalidMutation)?;
 
     let evaluator = args.function.new_with_vector_size(mutator.vector_size());
 
