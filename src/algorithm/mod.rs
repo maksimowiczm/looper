@@ -10,8 +10,11 @@ mod individual;
 pub mod mutator;
 mod population;
 
-#[derive(Debug, Clone)]
-pub struct AlgorithmEvent {}
+#[derive(Clone)]
+pub enum AlgorithmEvent {
+    Iteration(usize, Population),
+    Finished(Population),
+}
 
 pub struct AlgorithmParameters {
     pub iterations: usize,
@@ -46,6 +49,7 @@ impl Algorithm {
         let differential_evolution = DifferentialEvolution {
             mutator: params.mutator.as_ref(),
             crossover_probability: params.crossover_probability,
+            evaluator: params.evaluator,
         };
 
         let mut population =
@@ -53,15 +57,17 @@ impl Algorithm {
                 .expect("Population should not be empty");
 
         for i in 0..params.iterations {
-            // evaluate population
+            let _ = self
+                .message_bus
+                .send(AlgorithmEvent::Iteration(i, population.clone()))
+                .await;
 
-            // send iteration event
-
-            // depending on mutation strategy do something different
-
-            // evolve population
+            differential_evolution.evolve(params.mutation_factor, &mut population, &params.domain);
         }
 
-        // send finished event
+        let _ = self
+            .message_bus
+            .send(AlgorithmEvent::Finished(population.clone()))
+            .await;
     }
 }

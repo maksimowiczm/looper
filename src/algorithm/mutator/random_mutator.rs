@@ -20,6 +20,7 @@ impl Mutate for RandomMutator {
             random_individual,
             self.size,
             factor,
+            // Skip random individual
             population
                 .iter()
                 .filter(|x| x.as_ptr() != random_individual.as_ptr())

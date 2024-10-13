@@ -1,12 +1,12 @@
-use std::ops::{Add, Deref, Mul, Sub};
+use std::ops::{Add, Deref, DerefMut, Mul, Sub};
 
-#[cfg_attr(test, derive(Debug))]
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct Individual(Vec<f64>);
 
-impl Individual {
-    pub fn new(values: Vec<f64>) -> Self {
-        Self(values)
+// Constructor
+impl FromIterator<f64> for Individual {
+    fn from_iter<T: IntoIterator<Item = f64>>(iter: T) -> Self {
+        Self(iter.into_iter().collect())
     }
 }
 
@@ -18,9 +18,9 @@ impl Deref for Individual {
     }
 }
 
-impl FromIterator<f64> for Individual {
-    fn from_iter<T: IntoIterator<Item = f64>>(iter: T) -> Self {
-        Self(iter.into_iter().collect())
+impl DerefMut for Individual {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.0
     }
 }
 
@@ -54,5 +54,12 @@ impl PartialEq for Individual {
         self.iter()
             .zip(other.iter())
             .all(|(a, b)| (a - b).abs() < 1e-6)
+    }
+}
+
+#[cfg(test)]
+impl Individual {
+    pub fn new(values: Vec<f64>) -> Self {
+        Self(values)
     }
 }

@@ -14,6 +14,7 @@ impl Mutate for CurrentMutator {
             current,
             self.size,
             factor,
+            // Skip current individual
             population
                 .iter()
                 .filter(|x| x.as_ptr() != current.as_ptr())
