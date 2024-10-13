@@ -12,7 +12,7 @@ pub use parser::parse_mutator;
 
 pub trait Mutate {
     fn mutate(&self, factor: f64, current: &Individual, population: &Population) -> Individual;
-    fn vector_size(&self) -> usize;
+    fn required_population_size(&self) -> usize;
 }
 
 fn difference(

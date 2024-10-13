@@ -18,7 +18,7 @@ impl Mutate for CurrentMutator {
         )
     }
 
-    fn vector_size(&self) -> usize {
-        self.size
+    fn required_population_size(&self) -> usize {
+        self.size * 2 + 1
     }
 }

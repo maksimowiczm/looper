@@ -1,5 +1,7 @@
 use crate::algorithm::evaluator::Evaluator;
 use crate::algorithm::individual::Individual;
+use crate::algorithm::Domain;
+use rand::Rng;
 use std::ops::Deref;
 
 pub struct Population {
@@ -21,13 +23,19 @@ pub enum PopulationError {
 }
 
 impl Population {
-    pub fn new(
-        individuals: Vec<Individual>,
+    pub fn random(
+        domain: &[Domain],
+        population_size: usize,
         evaluator: Evaluator,
     ) -> Result<Self, PopulationError> {
-        if individuals.is_empty() {
+        if domain.is_empty() {
             return Err(PopulationError::EmptyPopulation);
         }
+
+        let mut rng = rand::thread_rng();
+        let individuals = (0..population_size)
+            .map(|_| domain.iter().map(|d| rng.gen_range(d.0..d.1)).collect())
+            .collect();
 
         Ok(Self {
             individuals,
@@ -64,7 +72,10 @@ mod tests {
             Individual::new(vec![1., 2.]),
             Individual::new(vec![3., 4.]),
         ];
-        let population = Population::new(individuals, sum).unwrap();
+        let population = Population {
+            individuals,
+            evaluator: sum,
+        };
 
         let best = population.best();
 

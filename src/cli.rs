@@ -18,7 +18,8 @@ pub struct Args {
     pub mutation_factor: f64,
     #[clap(long)]
     pub function: Function,
-    // todo add variables
+    #[clap(long, num_args = 2.., required = true)]
+    pub variables: Vec<f64>,
 }
 
 #[derive(ValueEnum, Copy, Clone)]
@@ -41,12 +42,22 @@ impl From<Function> for Evaluator {
 #[derive(Debug)]
 pub enum ParseError {
     InvalidMutation,
+    PopulationTooSmall(String),
+    DomainMissingMaximum(usize),
+    DomainInvalid(usize, f64, f64),
 }
 
 impl Display for ParseError {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         match self {
+            ParseError::PopulationTooSmall(s) => write!(f, "Population size too small: {}", s),
             ParseError::InvalidMutation => write!(f, "Invalid mutation"),
+            ParseError::DomainMissingMaximum(i) => {
+                write!(f, "Domain missing max value for variable {}", i)
+            }
+            ParseError::DomainInvalid(i, from, to) => {
+                write!(f, "Invalid domain for variable {}: {} > {}", i, from, to)
+            }
         }
     }
 }
@@ -54,7 +65,28 @@ impl Display for ParseError {
 pub fn parse_arguments(args: &Args) -> Result<AlgorithmParameters, ParseError> {
     let mutator = parse_mutator(&args.mutation).map_err(|_| ParseError::InvalidMutation)?;
 
-    // todo validate variables, everything should be the same size
+    if args.population_size < mutator.required_population_size() {
+        return Err(ParseError::PopulationTooSmall(
+            "Not enough individuals for given mutation".into(),
+        ));
+    }
+
+    let variables = args
+        .variables
+        .chunks(2)
+        .enumerate()
+        .map(|(i, v)| {
+            if v.len() != 2 {
+                return Err(ParseError::DomainMissingMaximum(i + 1));
+            }
+
+            if v[0] >= v[1] {
+                return Err(ParseError::DomainInvalid(i + 1, v[0], v[1]));
+            }
+
+            Ok((v[0], v[1]))
+        })
+        .collect::<Result<_, _>>()?;
 
     let params = AlgorithmParameters {
         evaluator: args.function.into(),
@@ -63,6 +95,7 @@ pub fn parse_arguments(args: &Args) -> Result<AlgorithmParameters, ParseError> {
         crossover_probability: args.crossover_probability,
         iterations: args.iterations,
         population_size: args.population_size,
+        domain: variables,
     };
 
     Ok(params)
