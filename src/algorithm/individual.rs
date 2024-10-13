@@ -1,6 +1,7 @@
 use std::ops::{Add, Deref, Mul, Sub};
 
-#[derive(Debug, Clone)]
+#[cfg_attr(test, derive(Debug))]
+#[derive(Clone)]
 pub struct Individual(Vec<f64>);
 
 impl Individual {
@@ -20,14 +21,6 @@ impl Deref for Individual {
 impl FromIterator<f64> for Individual {
     fn from_iter<T: IntoIterator<Item = f64>>(iter: T) -> Self {
         Self(iter.into_iter().collect())
-    }
-}
-
-impl PartialEq for Individual {
-    fn eq(&self, other: &Self) -> bool {
-        self.iter()
-            .zip(other.iter())
-            .all(|(a, b)| (a - b).abs() < 1e-6)
     }
 }
 
@@ -52,5 +45,14 @@ impl Add for Individual {
 
     fn add(self, other: Self) -> Self::Output {
         self.iter().zip(other.iter()).map(|(a, b)| a + b).collect()
+    }
+}
+
+#[cfg(test)]
+impl PartialEq for Individual {
+    fn eq(&self, other: &Self) -> bool {
+        self.iter()
+            .zip(other.iter())
+            .all(|(a, b)| (a - b).abs() < 1e-6)
     }
 }

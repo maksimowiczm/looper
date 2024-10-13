@@ -16,7 +16,10 @@ impl Mutate for BestMutator {
             best,
             self.size,
             factor,
-            population.iter().filter(|x| *x != best).collect(),
+            population
+                .iter()
+                .filter(|x| x.as_ptr() != best.as_ptr())
+                .collect(),
         )
     }
 

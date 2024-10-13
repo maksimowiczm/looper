@@ -69,7 +69,6 @@ mod tests {
     fn test_difference_panic() {
         let x1 = Individual::new(vec![1., 2.]);
         let x2 = Individual::new(vec![3., 4.]);
-        let x3 = Individual::new(vec![5., 1.]);
         let factor = 0.5;
 
         let start = &x1;

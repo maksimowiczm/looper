@@ -14,7 +14,10 @@ impl Mutate for CurrentMutator {
             current,
             self.size,
             factor,
-            population.iter().filter(|x| *x != current).collect(),
+            population
+                .iter()
+                .filter(|x| x.as_ptr() != current.as_ptr())
+                .collect(),
         )
     }
 

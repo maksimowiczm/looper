@@ -22,7 +22,7 @@ impl Mutate for RandomMutator {
             factor,
             population
                 .iter()
-                .filter(|x| *x != random_individual)
+                .filter(|x| x.as_ptr() != random_individual.as_ptr())
                 .collect(),
         )
     }
