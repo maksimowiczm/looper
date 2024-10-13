@@ -1,6 +1,6 @@
+use crate::algorithm::individual::Individual;
 use crate::algorithm::mutator::Mutate;
 use crate::algorithm::population::Population;
-use crate::algorithm::Individual;
 
 pub(super) struct DifferentialEvolution<'a> {
     pub mutator: &'a dyn Mutate,

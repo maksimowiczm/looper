@@ -1,6 +1,7 @@
+use crate::algorithm::individual::Individual;
 use crate::algorithm::mutator;
 use crate::algorithm::mutator::Mutate;
-use crate::algorithm::population::{Individual, Population};
+use crate::algorithm::population::Population;
 
 #[cfg_attr(test, derive(Debug, PartialEq))]
 pub struct CurrentMutator {

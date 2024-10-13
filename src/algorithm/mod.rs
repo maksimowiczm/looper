@@ -1,13 +1,13 @@
 use crate::algorithm::differential_evolution::DifferentialEvolution;
 use crate::algorithm::evaluator::Evaluator;
 use crate::algorithm::mutator::Mutate;
-use crate::algorithm::population::Individual;
 use crate::message_bus::MessageBus;
 
 mod differential_evolution;
 pub mod evaluator;
+mod individual;
 pub mod mutator;
-pub mod population;
+mod population;
 
 #[derive(Debug, Clone)]
 pub struct AlgorithmEvent {}

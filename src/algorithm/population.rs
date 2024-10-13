@@ -1,5 +1,6 @@
 use crate::algorithm::evaluator::Evaluator;
-use std::ops::{Add, Deref, Mul, Sub};
+use crate::algorithm::individual::Individual;
+use std::ops::Deref;
 
 pub struct Population {
     individuals: Vec<Individual>,
@@ -14,50 +15,59 @@ impl Deref for Population {
     }
 }
 
+#[derive(Debug)]
+pub enum PopulationError {
+    EmptyPopulation,
+}
+
 impl Population {
-    pub fn new(individuals: Vec<Individual>, evaluator: Evaluator) -> Self {
-        Self {
+    pub fn new(
+        individuals: Vec<Individual>,
+        evaluator: Evaluator,
+    ) -> Result<Self, PopulationError> {
+        if individuals.is_empty() {
+            return Err(PopulationError::EmptyPopulation);
+        }
+
+        Ok(Self {
             individuals,
             evaluator,
-        }
+        })
     }
 
     pub fn best(&self) -> &Individual {
-        todo!()
+        // the lower, the better
+
+        self.individuals
+            .iter()
+            .min_by(|lhs, rhs| {
+                (self.evaluator)(lhs)
+                    .partial_cmp(&(self.evaluator)(rhs))
+                    .expect("Evaluator always returns a number")
+            })
+            .expect("Population is not empty")
     }
 }
 
-#[derive(Debug, Clone, PartialEq)]
-pub struct Individual(Vec<f64>);
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-impl Deref for Individual {
-    type Target = [f64];
-
-    fn deref(&self) -> &Self::Target {
-        &self.0
+    fn sum(x: &[f64]) -> f64 {
+        x.iter().sum()
     }
-}
 
-impl Sub for Individual {
-    type Output = Individual;
+    #[test]
+    fn test_best() {
+        let individuals = vec![
+            Individual::new(vec![5., 6.]),
+            Individual::new(vec![1., 2.]),
+            Individual::new(vec![3., 4.]),
+        ];
+        let population = Population::new(individuals, sum).unwrap();
 
-    fn sub(self, rhs: Self) -> Self::Output {
-        todo!()
-    }
-}
+        let best = population.best();
 
-impl Mul<f64> for Individual {
-    type Output = Individual;
-
-    fn mul(self, rhs: f64) -> Self::Output {
-        todo!()
-    }
-}
-
-impl Add for Individual {
-    type Output = Individual;
-
-    fn add(self, rhs: Self) -> Self::Output {
-        todo!()
+        assert_eq!(best, &Individual::new(vec![1., 2.]));
     }
 }
