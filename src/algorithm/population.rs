@@ -1,12 +1,12 @@
-use crate::algorithm::evaluator::Evaluate;
+use crate::algorithm::evaluator::Evaluator;
 use std::ops::{Add, Deref, Mul, Sub};
 
-pub struct Population<'a> {
+pub struct Population {
     individuals: Vec<Individual>,
-    evaluator: &'a dyn Evaluate,
+    evaluator: Evaluator,
 }
 
-impl Deref for Population<'_> {
+impl Deref for Population {
     type Target = Vec<Individual>;
 
     fn deref(&self) -> &Self::Target {
@@ -14,8 +14,8 @@ impl Deref for Population<'_> {
     }
 }
 
-impl<'a> Population<'a> {
-    pub fn new(individuals: Vec<Individual>, evaluator: &'a dyn Evaluate) -> Self {
+impl Population {
+    pub fn new(individuals: Vec<Individual>, evaluator: Evaluator) -> Self {
         Self {
             individuals,
             evaluator,
@@ -28,11 +28,13 @@ impl<'a> Population<'a> {
 }
 
 #[derive(Debug, Clone, PartialEq)]
-pub struct Individual(pub Vec<f64>);
+pub struct Individual(Vec<f64>);
 
-impl Individual {
-    pub fn fitness(&self, evaluate: &dyn Evaluate) -> f64 {
-        evaluate.evaluate(self)
+impl Deref for Individual {
+    type Target = [f64];
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
     }
 }
 

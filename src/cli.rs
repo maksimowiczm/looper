@@ -1,4 +1,4 @@
-use crate::algorithm::evaluator::Evaluate;
+use crate::algorithm::evaluator::{griewank, rastrigin, Evaluator};
 use crate::algorithm::mutator::parse_mutator;
 use crate::algorithm::AlgorithmParameters;
 use clap::{Parser, ValueEnum};
@@ -21,16 +21,20 @@ pub struct Args {
     // todo add variables
 }
 
-#[derive(ValueEnum, Clone)]
+#[derive(ValueEnum, Copy, Clone)]
 pub enum Function {
     Rastrigin,
     Griewank,
     Rosenbrock,
 }
 
-impl Function {
-    pub fn new_with_vector_size(&self, vector_size: usize) -> Box<dyn Evaluate> {
-        todo!()
+impl From<Function> for Evaluator {
+    fn from(value: Function) -> Self {
+        match value {
+            Function::Rastrigin => rastrigin,
+            Function::Griewank => griewank,
+            Function::Rosenbrock => todo!(),
+        }
     }
 }
 
@@ -50,12 +54,10 @@ impl Display for ParseError {
 pub fn parse_arguments(args: &Args) -> Result<AlgorithmParameters, ParseError> {
     let mutator = parse_mutator(&args.mutation).map_err(|_| ParseError::InvalidMutation)?;
 
-    let evaluator = args.function.new_with_vector_size(mutator.vector_size());
-
-    // todo validate variable counts, everything should be the same size
+    // todo validate variables, everything should be the same size
 
     let params = AlgorithmParameters {
-        evaluator,
+        evaluator: args.function.into(),
         mutator,
         mutation_factor: args.mutation_factor,
         crossover_probability: args.crossover_probability,

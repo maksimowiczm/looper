@@ -1,5 +1,5 @@
 use crate::algorithm::differential_evolution::DifferentialEvolution;
-use crate::algorithm::evaluator::Evaluate;
+use crate::algorithm::evaluator::Evaluator;
 use crate::algorithm::mutator::Mutate;
 use crate::algorithm::population::Individual;
 use crate::message_bus::MessageBus;
@@ -16,10 +16,10 @@ pub struct AlgorithmParameters {
     pub iterations: usize,
     pub population_size: usize,
     //
-    // Something about individual. How many variables it has? What is the domain? Hard coupled with evaluator.
+    // Something about individual. How many variables it has? What is the domain?
     //
-    pub evaluator: Box<dyn Evaluate>, // might as well replace this with a closure
-    pub mutator: Box<dyn Mutate>, // Couple it with evaluator? They both have to know how many variables are there.
+    pub evaluator: Evaluator,
+    pub mutator: Box<dyn Mutate>,
     pub mutation_factor: f64,
     pub crossover_probability: f64,
 }

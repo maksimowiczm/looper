@@ -8,7 +8,6 @@ use regex::Regex;
 pub struct UnknownMutator;
 
 static REGEX: Lazy<Regex> = Lazy::new(|| {
-    println!("Compiling regex");
     Regex::new(r"(DE/)?(?<x>[a-zA-Z]+)/(?<how_many>[1-9]\d?)/bin").expect("This is a valid regex")
 });
 

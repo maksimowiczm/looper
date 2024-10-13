@@ -1,5 +1,4 @@
 use crate::algorithm::population::{Individual, Population};
-use itertools::Itertools;
 use rand::seq::SliceRandom;
 use rand::thread_rng;
 
