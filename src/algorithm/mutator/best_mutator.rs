@@ -18,6 +18,7 @@ impl Mutate for BestMutator {
             factor,
             // Skip the best individual
             population
+                .as_ref()
                 .iter()
                 .filter(|x| x.as_ptr() != best.as_ptr())
                 .collect(),

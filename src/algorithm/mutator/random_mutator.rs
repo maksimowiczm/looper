@@ -13,6 +13,7 @@ pub struct RandomMutator {
 impl Mutate for RandomMutator {
     fn mutate(&self, factor: f64, _: &Individual, population: &Population) -> Individual {
         let random_individual = population
+            .as_ref()
             .choose(&mut thread_rng())
             .expect("Population should not be empty");
 
@@ -22,6 +23,7 @@ impl Mutate for RandomMutator {
             factor,
             // Skip random individual
             population
+                .as_ref()
                 .iter()
                 .filter(|x| x.as_ptr() != random_individual.as_ptr())
                 .collect(),

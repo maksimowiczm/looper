@@ -14,6 +14,7 @@ pub(super) struct DifferentialEvolution<'a> {
 impl DifferentialEvolution<'_> {
     pub fn evolve(&self, mutation_factor: f64, population: &mut Population, domain: &[Domain]) {
         let mutants = population
+            .as_ref()
             .iter()
             .map(|individual| {
                 Self::mutate(
@@ -27,6 +28,7 @@ impl DifferentialEvolution<'_> {
             .collect::<Vec<_>>();
 
         population
+            .as_mut()
             .iter_mut()
             .zip(mutants)
             .for_each(|(individual, mutant)| {

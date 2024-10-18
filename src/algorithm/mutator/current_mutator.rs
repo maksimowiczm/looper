@@ -16,6 +16,7 @@ impl Mutate for CurrentMutator {
             factor,
             // Skip current individual
             population
+                .as_ref()
                 .iter()
                 .filter(|x| x.as_ptr() != current.as_ptr())
                 .collect(),

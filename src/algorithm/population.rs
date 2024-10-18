@@ -2,7 +2,6 @@ use crate::algorithm::evaluator::Evaluator;
 use crate::algorithm::individual::Individual;
 use crate::algorithm::Domain;
 use rand::Rng;
-use std::ops::{Deref, DerefMut};
 
 #[derive(Clone)]
 pub struct Population {
@@ -10,16 +9,14 @@ pub struct Population {
     evaluator: Evaluator,
 }
 
-impl Deref for Population {
-    type Target = Vec<Individual>;
-
-    fn deref(&self) -> &Self::Target {
+impl AsRef<Vec<Individual>> for Population {
+    fn as_ref(&self) -> &Vec<Individual> {
         &self.individuals
     }
 }
 
-impl DerefMut for Population {
-    fn deref_mut(&mut self) -> &mut Self::Target {
+impl AsMut<Vec<Individual>> for Population {
+    fn as_mut(&mut self) -> &mut Vec<Individual> {
         &mut self.individuals
     }
 }
