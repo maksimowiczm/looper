@@ -27,14 +27,14 @@ pub struct AlgorithmParameters {
 }
 pub type Domain = (f64, f64);
 
-pub struct Algorithm {
-    message_bus: MessageBus<AlgorithmEvent>,
+pub struct Algorithm<'a> {
+    message_bus: &'a MessageBus<AlgorithmEvent>,
     algorithm_parameters: AlgorithmParameters,
 }
 
-impl Algorithm {
+impl<'a> Algorithm<'a> {
     pub fn new(
-        message_bus: MessageBus<AlgorithmEvent>,
+        message_bus: &'a MessageBus<AlgorithmEvent>,
         algorithm_parameters: AlgorithmParameters,
     ) -> Self {
         Algorithm {
@@ -43,7 +43,7 @@ impl Algorithm {
         }
     }
 
-    pub async fn run(&self) {
+    pub fn run(&self) {
         let params = &self.algorithm_parameters;
 
         let differential_evolution = DifferentialEvolution {
@@ -57,17 +57,16 @@ impl Algorithm {
                 .expect("Population should not be empty");
 
         for i in 0..params.iterations {
-            let _ = self
-                .message_bus
-                .send(AlgorithmEvent::Iteration(i, population.clone()))
-                .await;
-
+            self.notify(AlgorithmEvent::Iteration(i, population.clone()));
             differential_evolution.evolve(params.mutation_factor, &mut population, &params.domain);
         }
 
-        let _ = self
-            .message_bus
-            .send(AlgorithmEvent::Finished(population.clone()))
-            .await;
+        self.notify(AlgorithmEvent::Finished(population));
+    }
+
+    fn notify(&self, event: AlgorithmEvent) {
+        if let Some(sender) = self.message_bus.as_ref() {
+            let _ = sender.send(event);
+        }
     }
 }
