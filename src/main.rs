@@ -1,11 +1,13 @@
 use crate::algorithm::{Algorithm, AlgorithmEvent};
 use crate::cli::{parse_arguments, Args};
 use clap::Parser;
+use data_logger::log_iteration;
 use message_bus::MessageBus;
 
 mod algorithm;
 mod cli;
 mod message_bus;
+mod data_logger;
 
 fn main() {
     let args = Args::parse();
@@ -25,14 +27,15 @@ fn main() {
 fn handle_algorithm_event(event: AlgorithmEvent) {
     match event {
         AlgorithmEvent::Iteration(i, p) => {
-            println!("{i}: {:?}", p.as_ref());
+            log_iteration(i as i64, p);
         }
         AlgorithmEvent::Finished(p) => {
             println!(
-                "Finished. Best: {:?}, Population {:?}",
+                "Finished. Best: {:?}",
                 p.best(),
-                p.as_ref()
             );
+
+            log_iteration(-1, p);
         }
     }
 }

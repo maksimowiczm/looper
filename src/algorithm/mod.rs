@@ -1,14 +1,14 @@
+use crate::message_bus::MessageBus;
 use crate::algorithm::differential_evolution::DifferentialEvolution;
 use crate::algorithm::evaluator::Evaluator;
 use crate::algorithm::mutator::Mutate;
-use crate::message_bus::MessageBus;
-use population::Population;
+use crate::algorithm::population::Population;
 
 mod differential_evolution;
 pub mod evaluator;
 mod individual;
 pub mod mutator;
-mod population;
+pub mod population;
 
 #[derive(Clone)]
 pub enum AlgorithmEvent {
