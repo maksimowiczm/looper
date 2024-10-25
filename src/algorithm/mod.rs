@@ -25,6 +25,7 @@ pub struct AlgorithmParameters {
     pub mutation_factor: f64,
     pub crossover_probability: f64,
     pub domain: Vec<Domain>,
+    pub verbose: Verbose,
 }
 pub type Domain = (f64, f64);
 

@@ -20,6 +20,15 @@ pub struct Args {
     pub function: Function,
     #[clap(long, num_args = 2.., required = true, allow_hyphen_values = true)]
     pub variables: Vec<f64>,
+    #[clap(long, default_value = "none")]
+    pub verbose: Verbose,
+}
+
+#[derive(ValueEnum, Copy, Clone)]
+pub enum Verbose {
+    None,
+    Iteration,
+    Finished,
 }
 
 #[derive(ValueEnum, Copy, Clone)]
@@ -96,6 +105,7 @@ pub fn parse_arguments(args: &Args) -> Result<AlgorithmParameters, ParseError> {
         iterations: args.iterations,
         population_size: args.population_size,
         domain: variables,
+        verbose: args.verbose,
     };
 
     Ok(params)
