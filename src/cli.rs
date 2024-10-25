@@ -18,7 +18,7 @@ pub struct Args {
     pub mutation_factor: f64,
     #[clap(long)]
     pub function: Function,
-    #[clap(long, num_args = 2.., required = true)]
+    #[clap(long, num_args = 2.., required = true, allow_hyphen_values = true)]
     pub variables: Vec<f64>,
 }
 
