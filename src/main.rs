@@ -1,13 +1,15 @@
+use crate::algorithm::evaluator::Evaluator;
 use crate::algorithm::{Algorithm, AlgorithmEvent};
 use crate::cli::{parse_arguments, Args};
+use crate::csv::{print_csv_header, print_csv_iteration};
 use clap::Parser;
-use data_logger::log_iteration;
 use message_bus::MessageBus;
+use std::ops::Deref;
 
 mod algorithm;
 mod cli;
+mod csv;
 mod message_bus;
-mod data_logger;
 
 fn main() {
     let args = Args::parse();
@@ -16,7 +18,10 @@ fn main() {
         Err(e) => return eprintln!("Error parsing arguments: {}", e),
     };
 
-    let mut message_bus = MessageBus::with_subscriber(handle_algorithm_event);
+    print_csv_header(params.domain.len());
+
+    let mut message_bus =
+        MessageBus::with_subscriber(move |e| handle_algorithm_event(e, &params.evaluator));
 
     Algorithm::new(&message_bus, params).run();
 
@@ -24,18 +29,8 @@ fn main() {
     let _ = message_bus.join();
 }
 
-fn handle_algorithm_event(event: AlgorithmEvent) {
-    match event {
-        AlgorithmEvent::Iteration(i, p) => {
-            log_iteration(i as i64, p);
-        }
-        AlgorithmEvent::Finished(p) => {
-            println!(
-                "Finished. Best: {:?}",
-                p.best(),
-            );
-
-            log_iteration(-1, p);
-        }
+fn handle_algorithm_event(event: AlgorithmEvent, evaluator: &Evaluator) {
+    if let AlgorithmEvent::Iteration(i, p) = event {
+        print_csv_iteration(i, p.deref(), evaluator);
     }
 }

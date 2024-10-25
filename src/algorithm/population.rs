@@ -59,10 +59,6 @@ impl Population {
             })
             .expect("Population is not empty")
     }
-
-    pub fn evaluate_for(&self, individual: &Individual) -> f64 {
-        (self.evaluator)(individual)
-    }
 }
 
 #[cfg(test)]

@@ -1,19 +1,20 @@
 use crate::message_bus::MessageBus;
 use crate::algorithm::differential_evolution::DifferentialEvolution;
 use crate::algorithm::evaluator::Evaluator;
+use crate::algorithm::individual::Individual;
 use crate::algorithm::mutator::Mutate;
 use crate::algorithm::population::Population;
 
 mod differential_evolution;
 pub mod evaluator;
-mod individual;
+pub mod individual;
 pub mod mutator;
 pub mod population;
 
 #[derive(Clone)]
 pub enum AlgorithmEvent {
-    Iteration(usize, Population),
-    Finished(Population),
+    Iteration(usize, Vec<Individual>),
+    Finished,
 }
 
 pub struct AlgorithmParameters {
@@ -57,11 +58,11 @@ impl<'a> Algorithm<'a> {
                 .expect("Population should not be empty");
 
         for i in 0..params.iterations {
-            self.notify(AlgorithmEvent::Iteration(i, population.clone()));
+            self.notify(AlgorithmEvent::Iteration(i, population.as_ref().clone()));
             differential_evolution.evolve(params.mutation_factor, &mut population, &params.domain);
         }
 
-        self.notify(AlgorithmEvent::Finished(population));
+        self.notify(AlgorithmEvent::Finished);
     }
 
     fn notify(&self, event: AlgorithmEvent) {
