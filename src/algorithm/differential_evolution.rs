@@ -4,6 +4,7 @@ use crate::algorithm::mutator::Mutate;
 use crate::algorithm::population::Population;
 use crate::algorithm::Domain;
 use rand::Rng;
+use crate::cli::Goal;
 
 pub(super) struct DifferentialEvolution<'a> {
     pub mutator: &'a dyn Mutate,
@@ -12,7 +13,7 @@ pub(super) struct DifferentialEvolution<'a> {
 }
 
 impl DifferentialEvolution<'_> {
-    pub fn evolve(&self, mutation_factor: f64, population: &mut Population, domain: &[Domain]) {
+    pub fn evolve(&self, mutation_factor: f64, population: &mut Population, domain: &[Domain], goal: &Goal) {
         let mutants = population
             .as_ref()
             .iter()
@@ -35,7 +36,10 @@ impl DifferentialEvolution<'_> {
                 let new = Self::crossover(individual, mutant, self.crossover_probability);
 
                 // if the new individual is better than the current one, replace it
-                if (self.evaluator)(individual) > (self.evaluator)(&new) {
+                if match goal {
+                    Goal::Min => (self.evaluator)(individual) > (self.evaluator)(&new),
+                    Goal::Max => (self.evaluator)(individual) < (self.evaluator)(&new),
+                } {
                     *individual = new;
                 }
             })
