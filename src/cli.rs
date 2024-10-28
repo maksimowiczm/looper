@@ -22,6 +22,14 @@ pub struct Args {
     pub variables: Vec<f64>,
     #[clap(long, default_value = "none")]
     pub verbose: Verbose,
+    #[clap(long, default_value = "min")]
+    pub goal: Goal,
+}
+
+#[derive(ValueEnum, Copy, Clone)]
+pub enum Goal {
+    Min,
+    Max,
 }
 
 #[derive(ValueEnum, Copy, Clone)]
@@ -106,6 +114,7 @@ pub fn parse_arguments(args: &Args) -> Result<AlgorithmParameters, ParseError> {
         population_size: args.population_size,
         domain: variables,
         verbose: args.verbose,
+        goal: args.goal,
     };
 
     Ok(params)

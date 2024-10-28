@@ -3,7 +3,7 @@ use crate::algorithm::evaluator::Evaluator;
 use crate::algorithm::individual::Individual;
 use crate::algorithm::mutator::Mutate;
 use crate::algorithm::population::Population;
-use crate::cli::Verbose;
+use crate::cli::{Goal, Verbose};
 use crate::message_bus::MessageBus;
 use std::time::Instant;
 
@@ -28,6 +28,7 @@ pub struct AlgorithmParameters {
     pub crossover_probability: f64,
     pub domain: Vec<Domain>,
     pub verbose: Verbose,
+    pub goal: Goal,
 }
 pub type Domain = (f64, f64);
 
@@ -64,7 +65,7 @@ impl<'a> Algorithm<'a> {
 
         for i in 0..params.iterations {
             self.notify(AlgorithmEvent::Iteration(i, population.as_ref().clone()));
-            differential_evolution.evolve(params.mutation_factor, &mut population, &params.domain);
+            differential_evolution.evolve(params.mutation_factor, &mut population, &params.domain, &params.goal);
         }
 
         let duration = start.elapsed();
