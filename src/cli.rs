@@ -1,4 +1,4 @@
-use crate::algorithm::evaluator::{griewank, rastrigin, Evaluator};
+use crate::algorithm::evaluator::{ackley, beale, griewank, himmelblau, levy, michalewicz, rastrigin, rosenbrock, schwefel, sphere, Evaluator};
 use crate::algorithm::mutator::parse_mutator;
 use crate::algorithm::AlgorithmParameters;
 use clap::{Parser, ValueEnum};
@@ -18,12 +18,12 @@ pub struct Args {
     pub mutation_factor: f64,
     #[clap(long)]
     pub function: Function,
-    #[clap(long, num_args = 2.., required = true, allow_hyphen_values = true)]
-    pub variables: Vec<f64>,
     #[clap(long, default_value = "none")]
     pub verbose: Verbose,
     #[clap(long, default_value = "min")]
     pub goal: Goal,
+    #[clap(long, num_args = 2.., required = true, allow_hyphen_values = true)]
+    pub variables: Vec<f64>,
 }
 
 #[derive(ValueEnum, Copy, Clone)]
@@ -43,7 +43,14 @@ pub enum Verbose {
 pub enum Function {
     Rastrigin,
     Griewank,
+    Sphere,
     Rosenbrock,
+    Ackley,
+    Schwefel,
+    Levy,
+    Beale,
+    Michalewicz,
+    Himmelblau,
 }
 
 impl From<Function> for Evaluator {
@@ -51,7 +58,14 @@ impl From<Function> for Evaluator {
         match value {
             Function::Rastrigin => rastrigin,
             Function::Griewank => griewank,
-            Function::Rosenbrock => todo!(),
+            Function::Sphere => sphere,
+            Function::Rosenbrock => rosenbrock,
+            Function::Ackley => ackley,
+            Function::Schwefel => schwefel,
+            Function::Levy => levy,
+            Function::Beale => beale,
+            Function::Michalewicz => michalewicz,
+            Function::Himmelblau => himmelblau,
         }
     }
 }
