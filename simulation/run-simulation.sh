@@ -1,9 +1,9 @@
 #!/bin/bash
 
-CONFIG_PARAMETERS_FILE="parameters.json"
+CONFIG_PARAMETERS_FILE="functions.json"
 CONFIG_MUTATIONS_FILE="mutations.json"
 RESULTS_DIR="results"
-RUNS=2
+RUNS=30
 
 if ! command -v jq &> /dev/null; then
   echo "jq is required but not installed."
@@ -14,16 +14,17 @@ mkdir -p "$RESULTS_DIR"
 
 # For each mutation (4)
 for MUTATION in $(jq -r '.mutations[]' "$CONFIG_MUTATIONS_FILE"); do
+  SANITIZED_MUTATION="${MUTATION//\//}"
   # For each function (10)
   for FUNC_NAME in $(jq -r 'keys[]' "$CONFIG_PARAMETERS_FILE"); do
     BOUNDS=$(jq -r ".\"$FUNC_NAME\".bounds" "$CONFIG_PARAMETERS_FILE")
-    OUTPUT_FILE="$RESULTS_DIR/${FUNC_NAME}_${MUTATION}.csv"
+    OUTPUT_FILE="$RESULTS_DIR/${FUNC_NAME}_${SANITIZED_MUTATION}.csv"
     # For runs (30)
     for RUN in $(seq 1 $RUNS); do
       echo "Running $FUNC_NAME (Run $RUN/$RUNS) with mutation $MUTATION"
       
        # Execute the command and capture output
-      OUTPUT=$(just --justfile ../Justfile run-release "$BOUNDS" "$FUNC_NAME" "$MUTATION")
+      OUTPUT=$(just --justfile ../justfile run-release "$MUTATION" "$FUNC_NAME" "$BOUNDS")
       # Extract headers and results
       HEADER=$(echo "$OUTPUT" | head -n 1)
       RESULT=$(echo "$OUTPUT" | tail -n 1)

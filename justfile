@@ -32,19 +32,19 @@ default:
 
 # Build the project in debug mode
 build-debug:
-    cargo build
+    @cargo build
 
 # Build the project in release mode
 build-release:
-    cargo build --release
+    @cargo build --release
 
 # Clean up build artifacts
 clean:
-    cargo clean
+    @cargo clean
 
 # Run the looper binary in debug mode
 run-debug mutation=def_mutation function=def_function variables=def_variables iterations=def_iterations population_size=def_population_size crossover_prob=def_crossover_prob mutation_factor=def_mutation_factor verbose=def_verbose goal=def_goal:
-    cargo run \
+    @cargo run \
         --package looper \
         --bin looper -- \
         --iterations {{ iterations }} \
@@ -59,7 +59,8 @@ run-debug mutation=def_mutation function=def_function variables=def_variables it
 
 # Run the looper binary in release mode
 run-release mutation=def_mutation function=def_function variables=def_variables iterations=def_iterations population_size=def_population_size crossover_prob=def_crossover_prob mutation_factor=def_mutation_factor verbose=def_verbose goal=def_goal:
-    cargo run \
+    @cargo run \
+        --quiet \
         --release \
         --package looper \
         --bin looper -- \

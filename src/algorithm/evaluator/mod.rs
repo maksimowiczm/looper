@@ -71,9 +71,14 @@ pub fn levy(x: &[f64]) -> f64 {
 // https://www.sfu.ca/~ssurjano/beale.html
 // global minimum at f(3, 0.5) = 0 | bounds [-4.5, 4.5]
 pub fn beale(x: &[f64]) -> f64 {
-    (1.5 - x[0] + x[0] * x[1]).powi(2)
-        + (2.25 - x[0] + x[0] * x[1].powi(2)).powi(2)
-        + (2.625 - x[0] + x[0] * x[1].powi(3)).powi(2)
+    x.windows(2)
+        .map(|pair| {
+            let (x0, x1) = (pair[0], pair[1]);
+            (1.5 - x0 + x0 * x1).powi(2)
+                + (2.25 - x0 + x0 * x1.powi(2)).powi(2)
+                + (2.625 - x0 + x0 * x1.powi(3)).powi(2)
+        })
+        .sum()
 }
 
 // https://www.sfu.ca/~ssurjano/michal.html
@@ -89,5 +94,10 @@ pub fn michalewicz(x: &[f64]) -> f64 {
 // https://www.sfu.ca/~ssurjano/booth.html
 // global minimum at f(1, 3) = 0 | bounds [-10, 10]
 pub fn booth(x: &[f64]) -> f64 {
-    (x[0] + 2. * x[1] - 7.).powi(2) + (2. * x[0] + x[1] - 5.).powi(2)
+    x.windows(2)
+        .map(|pair| {
+            let (x0, x1) = (pair[0], pair[1]);
+            (x0 + 2. * x1 - 7.).powi(2) + (2. * x0 + x1 - 5.).powi(2)
+        })
+        .sum()
 }
