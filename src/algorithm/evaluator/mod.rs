@@ -87,7 +87,11 @@ pub fn michalewicz(x: &[f64]) -> f64 {
     let m = 10;
     x.iter()
         .enumerate()
-        .map(|(i, &xi)| (-1.0) * (xi * (i as f64 + 1.).sin()).powi(2 * m))
+        .map(|(i, &xi)| {
+            let i = i as f64 + 1.0;
+            let term = (xi * (i * xi.powi(2) / PI).sin()).powi(2 * m);
+            -term
+        })
         .sum()
 }
 
