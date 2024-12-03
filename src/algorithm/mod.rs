@@ -65,7 +65,12 @@ impl<'a> Algorithm<'a> {
 
         for i in 0..params.iterations {
             self.notify(AlgorithmEvent::Iteration(i, population.as_ref().clone()));
-            differential_evolution.evolve(params.mutation_factor, &mut population, &params.domain, &params.goal);
+            differential_evolution.evolve(
+                params.mutation_factor,
+                &mut population,
+                &params.domain,
+                &params.goal,
+            );
         }
 
         let duration = start.elapsed();

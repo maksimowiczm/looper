@@ -10,10 +10,16 @@ pub fn print_csv_header(params: &AlgorithmParameters) {
     match params.verbose {
         Verbose::None => {}
         Verbose::Iteration => {
-            println!("iteration,individual_id,{},fitness", variables.trim_end_matches(','));
+            println!(
+                "iteration,individual_id,{},fitness",
+                variables.trim_end_matches(',')
+            );
         }
         Verbose::Finished => {
-            println!("iterations,time,{},fitness", variables.trim_end_matches(','));
+            println!(
+                "iterations,time,{},fitness",
+                variables.trim_end_matches(',')
+            );
         }
     }
 }
@@ -42,7 +48,7 @@ pub fn print_csv_finished(iterations: usize, time: f64, best: Individual, evalua
     let variables_str = best
         .iter()
         .fold(String::new(), |acc, v| acc + &format!("{},", v));
-    
+
     let fitness = evaluator(&best);
 
     println!(

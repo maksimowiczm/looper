@@ -1,4 +1,7 @@
-use crate::algorithm::evaluator::{ackley, beale, griewank, himmelblau, levy, michalewicz, rastrigin, rosenbrock, schwefel, sphere, Evaluator};
+use crate::algorithm::evaluator::{
+    ackley, beale, booth, griewank, levy, michalewicz, rastrigin, rosenbrock, schwefel, sphere,
+    Evaluator,
+};
 use crate::algorithm::mutator::parse_mutator;
 use crate::algorithm::AlgorithmParameters;
 use clap::{Parser, ValueEnum};
@@ -50,7 +53,7 @@ pub enum Function {
     Levy,
     Beale,
     Michalewicz,
-    Himmelblau,
+    Booth,
 }
 
 impl From<Function> for Evaluator {
@@ -65,7 +68,7 @@ impl From<Function> for Evaluator {
             Function::Levy => levy,
             Function::Beale => beale,
             Function::Michalewicz => michalewicz,
-            Function::Himmelblau => himmelblau,
+            Function::Booth => booth,
         }
     }
 }

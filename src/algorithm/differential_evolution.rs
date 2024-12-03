@@ -3,8 +3,8 @@ use crate::algorithm::individual::Individual;
 use crate::algorithm::mutator::Mutate;
 use crate::algorithm::population::Population;
 use crate::algorithm::Domain;
-use rand::Rng;
 use crate::cli::Goal;
+use rand::Rng;
 
 pub(super) struct DifferentialEvolution<'a> {
     pub mutator: &'a dyn Mutate,
@@ -13,7 +13,13 @@ pub(super) struct DifferentialEvolution<'a> {
 }
 
 impl DifferentialEvolution<'_> {
-    pub fn evolve(&self, mutation_factor: f64, population: &mut Population, domain: &[Domain], goal: &Goal) {
+    pub fn evolve(
+        &self,
+        mutation_factor: f64,
+        population: &mut Population,
+        domain: &[Domain],
+        goal: &Goal,
+    ) {
         let mutants = population
             .as_ref()
             .iter()
