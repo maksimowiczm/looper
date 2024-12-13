@@ -1,10 +1,9 @@
 use crate::algorithm::evaluator::Evaluator;
 use crate::algorithm::{Algorithm, AlgorithmEvent};
 use crate::cli::{parse_arguments, Args};
-use crate::csv::{print_csv_finished, print_csv_header, print_csv_iteration};
+use crate::csv::{print_csv_best_individual, print_csv_header};
 use clap::Parser;
 use message_bus::MessageBus;
-use std::ops::Deref;
 
 mod algorithm;
 mod cli;
@@ -31,11 +30,11 @@ fn main() {
 
 fn handle_algorithm_event(event: AlgorithmEvent, evaluator: &Evaluator) {
     match event {
-        AlgorithmEvent::Iteration(i, p) => {
-            print_csv_iteration(i, p.deref(), evaluator);
+        AlgorithmEvent::Iteration(i, t, p) => {
+            print_csv_best_individual(i, t, p, evaluator);
         }
         AlgorithmEvent::Finished(i, t, p) => {
-            print_csv_finished(i, t, p, evaluator);
+            print_csv_best_individual(i, t, p, evaluator);
         }
     }
 }

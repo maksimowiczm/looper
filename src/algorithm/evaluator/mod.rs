@@ -81,16 +81,14 @@ pub fn beale(x: &[f64]) -> f64 {
         .sum()
 }
 
-// https://www.sfu.ca/~ssurjano/michal.html
-// global minimum at f(2.20, 1.57) = -1.8013 | bounds [0, 3.14]
-pub fn michalewicz(x: &[f64]) -> f64 {
-    let m = 10;
-    x.iter()
-        .enumerate()
-        .map(|(i, &xi)| {
-            let i = i as f64 + 1.0;
-            let term = (xi * (i * xi.powi(2) / PI).sin()).powi(2 * m);
-            -term
+// https://www.sfu.ca/~ssurjano/easom.html
+// global minimum at f(pi, pi) = -1 | bounds [-100, 100]
+
+pub fn easom(x: &[f64]) -> f64 {
+    x.windows(2)
+        .map(|pair| {
+            let (x0, x1) = (pair[0], pair[1]);
+            -(x0.cos() * x1.cos()) * (-(x0 - PI).powi(2) - (x1 - PI).powi(2)).exp()
         })
         .sum()
 }

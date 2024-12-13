@@ -1,6 +1,5 @@
 use crate::algorithm::evaluator::{
-    ackley, beale, booth, griewank, levy, michalewicz, rastrigin, rosenbrock, schwefel, sphere,
-    Evaluator,
+    ackley, beale, booth, easom, griewank, levy, rastrigin, rosenbrock, schwefel, sphere, Evaluator,
 };
 use crate::algorithm::mutator::parse_mutator;
 use crate::algorithm::AlgorithmParameters;
@@ -52,7 +51,7 @@ pub enum Function {
     Schwefel,
     Levy,
     Beale,
-    Michalewicz,
+    Easom,
     Booth,
 }
 
@@ -67,7 +66,7 @@ impl From<Function> for Evaluator {
             Function::Schwefel => schwefel,
             Function::Levy => levy,
             Function::Beale => beale,
-            Function::Michalewicz => michalewicz,
+            Function::Easom => easom,
             Function::Booth => booth,
         }
     }

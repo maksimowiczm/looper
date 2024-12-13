@@ -15,7 +15,7 @@ pub mod population;
 
 #[derive(Clone)]
 pub enum AlgorithmEvent {
-    Iteration(usize, Vec<Individual>),
+    Iteration(usize, f64, Individual),
     Finished(usize, f64, Individual),
 }
 
@@ -64,7 +64,11 @@ impl<'a> Algorithm<'a> {
                 .expect("Population should not be empty");
 
         for i in 0..params.iterations {
-            self.notify(AlgorithmEvent::Iteration(i, population.as_ref().clone()));
+            self.notify(AlgorithmEvent::Iteration(
+                i,
+                start.elapsed().as_secs_f64(),
+                population.best().clone(),
+            ));
             differential_evolution.evolve(
                 params.mutation_factor,
                 &mut population,
@@ -73,11 +77,9 @@ impl<'a> Algorithm<'a> {
             );
         }
 
-        let duration = start.elapsed();
-
         self.notify(AlgorithmEvent::Finished(
             params.iterations,
-            duration.as_secs_f64(),
+            start.elapsed().as_secs_f64(),
             population.best().clone(),
         ));
     }
@@ -85,7 +87,7 @@ impl<'a> Algorithm<'a> {
     fn notify(&self, event: AlgorithmEvent) {
         let should_send = matches!(
             (self.algorithm_parameters.verbose, &event),
-            (Verbose::Iteration, AlgorithmEvent::Iteration(_, _))
+            (Verbose::Iteration, AlgorithmEvent::Iteration(_, _, _))
                 | (Verbose::Finished, AlgorithmEvent::Finished(_, _, _))
         );
 
