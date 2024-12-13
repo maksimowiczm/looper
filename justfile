@@ -58,7 +58,7 @@ run-debug mutation=def_mutation function=def_function variables=def_variables it
         --variables {{ variables }}
 
 # Run the looper binary in release mode
-run-release mutation=def_mutation function=def_function variables=def_variables iterations=def_iterations population_size=def_population_size crossover_prob=def_crossover_prob mutation_factor=def_mutation_factor verbose=def_verbose goal=def_goal:
+run-release mutation=def_mutation function=def_function variables=def_variables iterations=def_iterations verbose=def_verbose population_size=def_population_size crossover_prob=def_crossover_prob mutation_factor=def_mutation_factor goal=def_goal:
     @cargo run \
         --quiet \
         --release \

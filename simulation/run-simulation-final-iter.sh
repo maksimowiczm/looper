@@ -12,20 +12,28 @@ fi
 
 mkdir -p "$RESULTS_DIR"
 
-# For each mutation (4)
+# Total number of iterations (mutations * functions * runs)
+TOTAL_MUTATIONS=$(jq -r '.mutations | length' "$CONFIG_MUTATIONS_FILE")
+TOTAL_FUNCTIONS=$(jq -r 'keys | length' "$CONFIG_PARAMETERS_FILE")
+TOTAL_RUNS=$((TOTAL_MUTATIONS * TOTAL_FUNCTIONS * RUNS))
+CURRENT_RUN=0
+
+# For each mutation
 for MUTATION in $(jq -r '.mutations[]' "$CONFIG_MUTATIONS_FILE"); do
   SANITIZED_MUTATION="${MUTATION//\//}"
-  # For each function (10)
+  # For each function
   for FUNC_NAME in $(jq -r 'keys[]' "$CONFIG_PARAMETERS_FILE"); do
     BOUNDS=$(jq -r ".\"$FUNC_NAME\".bounds" "$CONFIG_PARAMETERS_FILE")
     OUTPUT_FILE="$RESULTS_DIR/${FUNC_NAME}_${SANITIZED_MUTATION}.csv"
-    # For runs (30)
+    # For runs
     for RUN in $(seq 1 $RUNS); do
-      echo "Running $FUNC_NAME (Run $RUN/$RUNS) with mutation $MUTATION"
-      
-       # Execute the command and capture output
+      ((CURRENT_RUN++))
+      PERCENTAGE=$((CURRENT_RUN * 100 / TOTAL_RUNS))
+
+      echo -ne "\r\033[KRunning $FUNC_NAME (Run $RUN/$RUNS) with mutation $MUTATION | Progress: [$CURRENT_RUN/$TOTAL_RUNS] ${PERCENTAGE}%"
+
       OUTPUT=$(just --justfile ../justfile run-release "$MUTATION" "$FUNC_NAME" "$BOUNDS")
-      # Extract headers and results
+
       HEADER=$(echo "$OUTPUT" | head -n 1)
       RESULT=$(echo "$OUTPUT" | tail -n 1)
       
